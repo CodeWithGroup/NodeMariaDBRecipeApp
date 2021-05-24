@@ -5,7 +5,7 @@ const db = require('./database')
 const app = express();
 
 app.use((request, result, next) => {
-    result.header("Access-Control-Allow-Origin", `http://localhost:${process.env.APP_PORT}`);
+    result.header("Access-Control-Allow-Origin", `http://localhost:${process.env.CLIENT_PORT}`);
     result.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
