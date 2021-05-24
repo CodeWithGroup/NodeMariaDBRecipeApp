@@ -1,0 +1,34 @@
+{
+  "author": "Drew Morgan",
+  "name": "recipe_api",
+  "version": "0.1.0",
+  "description": "API for an example React/Node/MariaDB app for a CodeWith workshop",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon ./index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-myconnection": "^1.0.4",
+    "mariadb": "^2.5.3",
+    "mysql": "^2.18.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodeWithGroup/NodeMariaDBRecipeApp.git"
+  },
+  "keywords": [
+    "CodeWith"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CodeWithGroup/NodeMariaDBRecipeApp/issues"
+  },
+  "homepage": "https://github.com/CodeWithGroup/NodeMariaDBRecipeApp#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
