@@ -1,58 +1,47 @@
 require('dotenv').config();
+const express = require('express');
+const db = require('./database')
 
-const host = process.env.MARIADB_HOST;
-const port = process.env.MARIADB_PORT;
-const user = process.env.MARIADB_USER;
-const password = process.env.MARIADB_PASSWORD;
-const database = process.env.MARIADB_DB;
+const app = express();
 
-// const express = require('express');
-// const bodyParser = require('body-parser');
-// var connection = require('express-myconnection');
-var mariadb = require('mariadb');
-
-console.log(`Connecting to database ${database} on ${host}`);
-
-const connect = mariadb.createConnection({
-    host: host,
-    port: port,
-    user: user,
-    password: password,
-    database: database
+app.use((request, result, next) => {
+    result.header("Access-Control-Allow-Origin", `http://localhost:${process.env.APP_PORT}`);
+    result.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
 });
 
-async function getAllRecipes() {
-    const sql = `SELECT * FROM recipe_app.recipes`;
-    return read(sql, []);
-}
+app.get("/", (request, result) => {
+    result.json({
+        urls: {
+            get_all: `localhost:${process.env.API_PORT}/api`,
+            get_1: `localhost:${process.env.API_PORT}/api/1`,
+            get_2: `localhost:${process.env.API_PORT}/api/2`,
+            search: `localhost:${process.env.API_PORT}/api/brownie`
+        }
+    });
+});
 
-async function getRecipe(id) {
-    const sql = `SELECT * FROM recipe_app.recipes WHERE id = ?`;
-    return read(sql, [id]);
-}
+app.get("/api", (request, result) => {
+    db.getAllRecipes()
+        .then(data => {
+            result.json(data.results)
+        })
+        .catch(err => result.status(500).json(err));
+})
 
-async function read(sql, params) {
-    let result;
-    return connect.then(connection =>
-        connection
-            .query(sql, params)
-            .then(rows => {
-                return { rows };
-            })
-            .catch(err => {
-                return { err, message: "Database read error", results: {}, sql };
-            })
-            .finally(_ => {
-                connection.end();
-            })
-    )
-    .then(result => {
-        return result;
-    })
-    .catch(err => {
-        result = { err, message: "Connection error", results: {} };
-    })
-}
+app.get("/api/:id", (request, result) => {
+    const id = request.params.id;
 
-getAllRecipes().then(result => console.log(result));
-getRecipe(1).then(result => console.log(result));
+    db.getRecipe(id)
+        .then(data => {
+            if (data.results.length > 0) {
+                result.json(data.results);
+            }
+            else {
+                result.status(404).json({ message: "Not found" });
+            }
+        })
+        .catch(err => result.status(500).json(err));
+})
+
+app.listen(process.env.API_PORT, () => console.log(`Listening at port http://localhost:${process.env.API_PORT}`));
